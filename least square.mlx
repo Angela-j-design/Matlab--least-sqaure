@@ -1,0 +1,57 @@
+clc
+clear
+close all
+
+T  = [10 15 20 25 40 50 55 60 75];
+TS = [5 20 18 40 33 54 70 60 78];
+y = TS;
+
+figure
+plot(T,TS,"g.","MarkerSize",15)
+hold on
+
+%% Curve 1 : Linear 
+A = [ones(length(T),1), T(:)];
+A_star = A'*A;
+y_star = A'*y(:);
+c1 = A_star\y_star;
+
+t = linspace(10,70);
+y1 = c1(1) + c1(2).*t;
+plot(t,y1,"g-","LineWidth",1.5)
+
+%% Curve 2 : Quadratic 
+A = [ones(length(T),1), (T(:)).^2];
+A_star = A'*A;
+y_star = A'*y(:);
+c2 = A_star\y_star;
+
+y2 = c2(1) + c2(2).*(t.^2);
+plot(t,y2,"b:","LineWidth",1.5)
+
+%% Curve 3 : Square Root 
+A = [ones(length(T),1), (T(:)).^(1/2)];
+A_star = A'*A;
+y_star = A'*y(:);
+c3 = A_star\y_star;
+
+y3 = c3(1) + c3(2).*sqrt(t);
+plot(t,y3,"r--","LineWidth",1.5)
+
+xlabel("Time (T)")
+ylabel("Tensile Strength (TS)")
+title("Time vs Tensile Strength")
+
+legend("analytical","curve one","curve two","curve three")
+
+%%  Errors
+e1 = y - (c1(1) + c1(2)*T);
+e2 = y - (c2(1) + c2(2).*(T.^2));
+e3 = y - (c3(1) + c3(2).*sqrt(T));
+
+e1_eq = sum(e1.^2)
+e2_eq = sum(e2.^2)
+e3_eq = sum(e3.^2)
+
+%% Prediction at T = 32
+y_32 = c3(1) + c3(2)*sqrt(32)
